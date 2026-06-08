@@ -32,6 +32,7 @@ from docling.backend.mspowerpoint_backend import MsPowerpointDocumentBackend
 from docling.backend.msword_backend import MsWordDocumentBackend
 from docling.backend.noop_backend import NoOpBackend
 from docling.backend.webvtt_backend import WebVTTDocumentBackend
+from docling.backend.xml.drawio_backend import DrawioDocumentBackend
 from docling.backend.xml.jats_backend import JatsDocumentBackend
 from docling.backend.xml.uspto_backend import PatentUsptoDocumentBackend
 from docling.backend.xml.xbrl_backend import XBRLDocumentBackend
@@ -139,6 +140,11 @@ class XBRLFormatOption(FormatOption):
     backend_options: XBRLBackendOptions | None = None
 
 
+class DrawioFormatOption(FormatOption):
+    pipeline_cls: Type = SimplePipeline
+    backend: Type[AbstractDocumentBackend] = DrawioDocumentBackend
+
+
 class ImageFormatOption(FormatOption):
     pipeline_cls: Type = StandardPdfPipeline
     backend: Type[AbstractDocumentBackend] = ImageDocumentBackend
@@ -175,6 +181,7 @@ def _get_default_option(format: InputFormat) -> FormatOption:
         InputFormat.XML_USPTO: PatentUsptoFormatOption(),
         InputFormat.XML_JATS: XMLJatsFormatOption(),
         InputFormat.XML_XBRL: XBRLFormatOption(),
+        InputFormat.DRAWIO: DrawioFormatOption(),
         InputFormat.METS_GBS: FormatOption(
             pipeline_cls=StandardPdfPipeline, backend=MetsGbsDocumentBackend
         ),

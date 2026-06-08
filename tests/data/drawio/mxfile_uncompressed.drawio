@@ -1,0 +1,19 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="page1" name="Flow">
+    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Input" style="rounded=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="100" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="Output" style="rounded=1" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="100" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" edge="1" source="2" target="3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

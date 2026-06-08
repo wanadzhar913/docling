@@ -489,6 +489,11 @@ class _DocumentConversionInput(BaseModel):
         content = b""  # empty binary blob
         formats: list[InputFormat] = []
 
+        if isinstance(obj, Path) and obj.suffix.lower() == ".drawio":
+            return InputFormat.DRAWIO
+        if isinstance(obj, DocumentStream) and obj.name.lower().endswith(".drawio"):
+            return InputFormat.DRAWIO
+
         if isinstance(obj, Path):
             mime = filetype.guess_mime(str(obj))
             if mime is None:
@@ -551,6 +556,13 @@ class _DocumentConversionInput(BaseModel):
         _log.info(f"detected formats: {formats}")
 
         if formats:
+            if len(formats) > 1 and not content:
+                if isinstance(obj, Path):
+                    with obj.open("rb") as f:
+                        content = f.read(8192)
+                elif isinstance(obj, DocumentStream):
+                    content = obj.stream.read(8192)
+                    obj.stream.seek(0)
             if len(formats) == 1 and mime not in ("text/plain"):
                 return formats[0]
             else:  # ambiguity in formats
@@ -587,6 +599,14 @@ class _DocumentConversionInput(BaseModel):
         return None
 
     @staticmethod
+    def _detect_drawio(content: bytes) -> bool:
+        """Return True when content looks like a draw.io diagram."""
+        if not content:
+            return False
+        content_lower = content.lower()
+        return b"<mxgraphmodel" in content_lower or b"<mxfile" in content_lower
+
+    @staticmethod
     def _guess_from_content(
         content: bytes, mime: str, formats: list[InputFormat]
     ) -> Optional[InputFormat]:
@@ -594,6 +614,12 @@ class _DocumentConversionInput(BaseModel):
         input_format: Optional[InputFormat] = None
 
         if mime in {"application/xml", "application/xhtml+xml"}:
+            if (
+                InputFormat.DRAWIO in formats
+                and _DocumentConversionInput._detect_drawio(content)
+            ):
+                return InputFormat.DRAWIO
+
             content_str = content.decode("utf-8")
 
             if (
@@ -655,6 +681,8 @@ class _DocumentConversionInput(BaseModel):
             mime = FormatToMimeType[InputFormat.VTT][0]
         elif ext in FormatToExtensions[InputFormat.LATEX]:
             mime = FormatToMimeType[InputFormat.LATEX][0]
+        elif ext in FormatToExtensions[InputFormat.DRAWIO]:
+            mime = FormatToMimeType[InputFormat.DRAWIO][0]
         return mime
 
     @staticmethod
@@ -692,6 +720,9 @@ class _DocumentConversionInput(BaseModel):
             r"<!doctype\s+(?P<root>[a-zA-Z_:][a-zA-Z0-9_:.-]*)\s+.*>\s*<(?P=root)\b"
         )
         if p.search(content_str):
+            return "application/xml"
+
+        if content_str.startswith(("<mxgraphmodel", "<mxfile")):
             return "application/xml"
 
         return None

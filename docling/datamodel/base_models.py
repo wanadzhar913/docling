@@ -72,6 +72,7 @@ class InputFormat(str, Enum):
     AUDIO = "audio"
     VTT = "vtt"
     LATEX = "latex"
+    DRAWIO = "drawio"
 
 
 class OutputFormat(str, Enum):
@@ -103,6 +104,7 @@ FormatToExtensions: dict[InputFormat, list[str]] = {
     InputFormat.AUDIO: ["wav", "mp3", "m4a", "aac", "ogg", "flac", "mp4", "avi", "mov"],
     InputFormat.VTT: ["vtt"],
     InputFormat.LATEX: ["tex", "latex"],
+    InputFormat.DRAWIO: ["drawio"],
 }
 
 FormatToMimeType: dict[InputFormat, list[str]] = {
@@ -154,6 +156,7 @@ FormatToMimeType: dict[InputFormat, list[str]] = {
     ],
     InputFormat.VTT: ["text/vtt"],
     InputFormat.LATEX: ["text/x-tex", "application/x-tex", "text/x-latex"],
+    InputFormat.DRAWIO: ["application/xml"],
 }
 
 MimeTypeToFormat: dict[str, list[InputFormat]] = {

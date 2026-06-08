@@ -77,6 +77,7 @@ from docling.datamodel.settings import settings
 from docling.document_converter import (
     AudioFormatOption,
     DocumentConverter,
+    DrawioFormatOption,
     ExcelFormatOption,
     FormatOption,
     HTMLFormatOption,
@@ -818,6 +819,9 @@ def convert(  # noqa: C901
                     pipeline_options=simple_format_option
                 ),
                 InputFormat.LATEX: LatexFormatOption(
+                    pipeline_options=simple_format_option
+                ),
+                InputFormat.DRAWIO: DrawioFormatOption(
                     pipeline_options=simple_format_option
                 ),
             }
